@@ -12,11 +12,34 @@ def softmax(x):
 def cross_loss(resultatss, y_true):
     pass
 def train(model, X_train, y_train, X_test, y_test, epochs=5, batch_size=64):
+    """
+
+    :param model:
+    :param X_train:
+    :param y_train:
+    :param X_test:
+    :param y_test:
+    :param epochs:
+    :param batch_size:
+    :return:
+    """
     pass
 class Conv:
     def __init__(self, n_filters, filter_size, n_channels, lr=0.01):
+        """
+
+        :param n_filters:
+        :param filter_size:
+        :param n_channels:
+        :param lr:
+        """
         pass
     def forward(self, entree):
+        """
+
+        :param entree:
+        :return:
+        """
         pass
     def backward(self, gradient):
         pass
@@ -43,6 +66,11 @@ class CNN:
     def forward(self, X):
         pass
     def backward(self, gradientscore):
+        """
+
+        :param gradientscore:
+        :return:
+        """
         pass
     def predict(self, X):
         pass
