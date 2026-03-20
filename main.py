@@ -1,10 +1,4 @@
 import numpy as np
-import urllib.request
-import urllib.error
-import gzip
-import os
-import ssl
-import time
 import matplotlib.pyplot as plt
 
 def download_mnist(path="./mnist"):
@@ -19,16 +13,15 @@ def cross_loss(resultatss, y_true):
     pass
 def train(model, X_train, y_train, X_test, y_test, epochs=5, batch_size=64):
     pass
-class Conv2D:
+class Conv:
     def __init__(self, n_filters, filter_size, n_channels, lr=0.01):
         pass
     def forward(self, entree):
         pass
     def backward(self, gradient):
         pass
-    def _adam_update(self, dW, db):
-        pass
-class MaxPooling2D:
+
+class Pooling:
     def __init__(self, pool_size=2):
         pass
 
@@ -43,8 +36,7 @@ class Dense:
         pass
     def backward(self, gradient):
         pass
-    def _adam_update(self, dW, db):
-        pass
+
 class CNN:
     def __init__(self, lr=0.001):
         pass
