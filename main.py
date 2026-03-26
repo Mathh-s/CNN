@@ -7,7 +7,7 @@ def download_mnist(path="./mnist"):
     pass
 
 def relu(x):
-    return np.maximum(0, x)
+    return np.maximum(x,0)
 
 def relu_backward(gradient, x):
     #Rétropropagation
