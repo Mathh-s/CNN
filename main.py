@@ -58,8 +58,8 @@ class Conv:
         #Sauvegarde pour backward (gradient)
         self.entree = entree
 
-        #Dimensions : taille de lot, canaux, hauteur, largeur
-        batch, n_channels, H, W = entree.shape
+        #Dimensions : canaux, hauteur, largeur (1 seule image à la fois)
+        n_channels, H, W = entree.shape
 
         #Calcul de la taille de la sortie après convolution sans padding
         #Formule : taille_sortie = taille_entrée - taille_filtre + 1
@@ -67,23 +67,21 @@ class Conv:
         W_out = W - self.filter_size + 1
 
         #Allocation du tenseur de sortie rempli de zéros
-        #Forme : (batch, n_filters, H_out, W_out)
-        sortie = np.zeros((batch, self.n_filters, H_out, W_out))
+        #Forme : (n_filters, H_out, W_out)
+        sortie = np.zeros((self.n_filters, H_out, W_out))
 
-        #Boucle sur chaque image du batch
-        for b in range(batch):
-            #Boucle sur chaque filtre (chaque filtre produit une feature map)
-            for f in range(self.n_filters):
-                #Boucle sur chaque position verticale de la fenêtre glissante
-                for i in range(H_out):
-                    #Boucle sur chaque position horizontale de la fenêtre glissante
-                    for j in range(W_out):
-                        #Région de l'image couverte par le filtre
-                        #Forme : (n_channels, filter_size, filter_size)
-                        region = entree[b, :, i:i+self.filter_size, j:j+self.filter_size]
+        #Boucle sur chaque filtre (chaque filtre produit une feature map)
+        for f in range(self.n_filters):
+            #Boucle sur chaque position verticale de la fenêtre glissante
+            for i in range(H_out):
+                #Boucle sur chaque position horizontale de la fenêtre glissante
+                for j in range(W_out):
+                    #Région de l'image couverte par le filtre
+                    #Forme : (n_channels, filter_size, filter_size)
+                    region = entree[:, i:i+self.filter_size, j:j+self.filter_size]
 
-                        #Convolution : produit élément par élément entre la région et le filtre, puis somme de tous les résultats + biais
-                        sortie[b, f, i, j] = np.sum(region * self.filters[f]) + self.biases[f]
+                    #Convolution : produit élément par élément entre la région et le filtre, puis somme de tous les résultats + biais
+                    sortie[f, i, j] = np.sum(region * self.filters[f]) + self.biases[f]
 
         return sortie
 
@@ -101,7 +99,7 @@ class Pooling:
         self.entree = entree  
         
         #Dimensions
-        batch, channels, H, W = entree.shape
+        channels, H, W = entree.shape
 
         #Taille fenêtre
         p = self.pool_size
@@ -111,27 +109,27 @@ class Pooling:
         W_out = W // p
 
         #Tenseur de sortie
-        sortie = np.zeros((batch, channels, H_out, W_out))
+        sortie = np.zeros((channels, H_out, W_out))
 
-        #Boucle sur chaque image du batch
-        for b in range(batch):
-            #Boucle sur chaque canal 
-            for c in range(channels):
-                #Boucle sur chaque position verticale de la fenêtre
-                for i in range(H_out):
-                    #Boucle sur chaque position horizontale de la fenêtre
-                    for j in range(W_out):
-                        #Fenêtre p×p dans le canal c
-                        #i*p:(i+1)*p sélectionne les lignes de la fenêtre
-                        #j*p:(j+1)*p sélectionne les colonnes de la fenêtre
-                        region = entree[b, c, i*p:(i+1)*p, j*p:(j+1)*p]
+        #Pour 1 seule image
+        #Boucle sur chaque canal 
+        for c in range(channels):
+            #Boucle sur chaque position verticale de la fenêtre
+            for i in range(H_out):
+                #Boucle sur chaque position horizontale de la fenêtre
+                for j in range(W_out):
+                    #Fenêtre p×p dans le canal c
+                    #i*p:(i+1)*p sélectionne les lignes de la fenêtre
+                    #j*p:(j+1)*p sélectionne les colonnes de la fenêtre
+                    region = entree[c, i*p:(i+1)*p, j*p:(j+1)*p]
 
                         #Max Pooling
-                        sortie[b, c, i, j] = np.max(region)
+                        sortie[c, i, j] = np.max(region)
 
         return sortie
         
     def backward(self, gradient):
+        #Transforme gradient de la forme (channels, H_out, W_out) en (channels, H, W)
         pass
 
 
@@ -156,9 +154,9 @@ class Dense:
     def forward(self, X):
         #Sauvegarde pour le backward
         self.entree = X  
-        #Forme X : (batch, nentree)
+        #Forme X : (1, nentree)
         #Forme W : (nentree, nsortie)
-        #Forme sortie : (batch, nsortie)
+        #Forme sortie : (1, nsortie)
         return X @ self.W + self.b
 
     def backward(self, gradient):
@@ -177,25 +175,25 @@ class CNN:
 
     def forward(self, X):
         #Convolution
-        out = self.conv.forward(X)           #(batch, 8, 26, 26)
+        out = self.conv.forward(X)           #(8, 26, 26)
 
         #ReLU
-        out = np.maximum(0, out)             #(batch, 8, 26, 26)
+        out = np.maximum(0, out)             #(8, 26, 26)
 
         #Max Pooling
-        out = self.pool.forward(out)         #(batch, 8, 13, 13)
+        out = self.pool.forward(out)         #(8, 13, 13)
 
         #Aplatissement (flatten)
         batch = out.shape[0]
-        out = out.reshape(batch, -1)         #(batch, 8*13*13 = 1352)
+        out = out.reshape(batch, -1)         #(8*13*13 = 1352)
 
         #Couche Dense
-        out = self.dense1.forward(out)       #(batch, 128)
+        out = self.dense1.forward(out)       #(1, 128)
         #ReLU
         out = np.maximum(0, out)            
 
         #Couche de sortie (logits)
-        out = self.dense2.forward(out)       #(batch, 10)
+        out = self.dense2.forward(out)       #(1, 10)
 
         return out  #scores bruts (avant softmax)
 
