@@ -121,10 +121,8 @@ class Pooling:
                     #Fenêtre p×p dans le canal c
                     #i*p:(i+1)*p sélectionne les lignes de la fenêtre
                     #j*p:(j+1)*p sélectionne les colonnes de la fenêtre
-                    region = entree[c, i*p:(i+1)*p, j*p:(j+1)*p]
-
-                        #Max Pooling
-                        sortie[c, i, j] = np.max(region)
+                    region = entree[c, i*p:(i+1)*p, j*p:(j+1)*p]#Max Pooling
+                    sortie[c, i, j] = np.max(region)
 
         return sortie
         
@@ -160,8 +158,12 @@ class Dense:
         return X @ self.W + self.b
 
     def backward(self, gradient):
-        pass
-
+        dW = self.entree.T @ gradient # Calcule l'erreur associée aux poids
+        db = np.sum(gradient, axis=0) # Calcule l'erreur associée aux biais
+        dX = gradient @ self.W.T # Calcule l'erreur de l'entrée pour la passer à la couche d'avant
+        self.W -= self.lr * dW # Modifie les poids
+        self.b -= self.lr * db # Modifie les biais
+        return dX
 
 class CNN:
     def __init__(self, lr=0.001):
