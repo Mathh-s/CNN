@@ -206,5 +206,5 @@ class CNN:
         #Forward pour logits
         scores = self.forward(X)
 
-        #Indice avec le score le plus élevé (classe prédite pour chaque image du batch)
+        #Indice avec le score le plus élevé 
         return np.argmax(scores, axis=1)
