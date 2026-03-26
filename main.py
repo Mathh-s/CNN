@@ -2,21 +2,37 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 def download_mnist(path="./mnist"):
+    #Télécharge data
+    #Retourne X_train, y_train & X_test, y_test
     pass
 
 def relu(x):
+    #ReLU(x) = max(0, x)
+    #Renvoie un tableau positif 
     pass
 
 def relu_backward(gradient, x):
+    #Rétropropagation
+    #dL/dx = dL/dy * 1 si x > 0, sinon 0
     pass
 
 def softmax(x):
+    #Convertit logits en proba
+    #softmax(x_i) = exp(x_i) / somme exp(x_j)
     pass
 
 def cross_loss(resultatss, y_true):
+    #Calcul loss
+    #L = -1/N * somme log(p[classe_vraie])
     pass
 
 def train(model, X_train, y_train, X_test, y_test, epochs=5, batch_size=64):
+    #Boucle d'entraînement
+    #Pour chaque epoch :
+        #Shuffle
+        #Découpage en mini-batches de taille `batch_size`
+        #Pour chaque mini-batch :
+               #Forward, Softmax, Calcul loss, Backward, MAJ
     pass
 
 class Conv:
