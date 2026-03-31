@@ -206,3 +206,10 @@ class CNN:
 
         #Indice avec le score le plus élevé 
         return np.argmax(scores, axis=1)
+
+
+
+
+
+
+#hhdhhddnd
