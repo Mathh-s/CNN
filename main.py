@@ -184,11 +184,11 @@ class CNN:
         out = self.pool.forward(out)         #(8, 13, 13)
 
         #Aplatissement (flatten)
-        batch = out.shape[0]
-        out = out.reshape(batch, -1)         #(8*13*13 = 1352)
+        out = out.reshape(-1)         #(8*13*13 = 1352)
 
         #Couche Dense
         out = self.dense1.forward(out)       #(1, 128)
+        
         #ReLU
         out = np.maximum(0, out)            
 
