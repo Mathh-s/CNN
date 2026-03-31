@@ -84,7 +84,26 @@ class Conv:
         return sortie
 
     def backward(self, gradient):
-        pass
+        n_filters, H_out, W_out = gradient.shape
+        n_channels, H, W = self.entree.shape
+        
+        d_filters = np.zeros(self.filters.shape)
+        d_biases = np.zeros(self.biases.shape)
+        d_entree = np.zeros(self.entree.shape)
+
+        for f in range(n_filters):
+            for i in range(H_out):
+                for j in range(W_out):
+                    region = self.entree[:, i:i+self.filter_size, j:j+self.filter_size]
+                    
+                    d_filters[f] += region * gradient[f, i, j]
+                    d_biases[f] += gradient[f, i, j]
+                    d_entree[:, i:i+self.filter_size, j:j+self.filter_size] += gradient[f, i, j] * self.filters[f]
+
+        self.filters -= self.lr * d_filters
+        self.biases -= self.lr * d_biases
+
+        return d_entree
 
 
 class Pooling:
