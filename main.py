@@ -1,10 +1,24 @@
 import numpy as np
+import tensorflow_datasets as tfds
 import matplotlib.pyplot as plt
+import cv2
+IMG_SIZE = 64
 
-def download_mnist(path="./mnist"):
-    #Télécharge data
-    #Retourne X_train, y_train & X_test, y_test
-    pass
+ds_train, ds_test = tfds.load('cats_vs_dogs',split=['train[:80%]', 'train[80%:]'],as_supervised=True)
+
+def dataset_to_numpy(ds, img_size):
+    X, y = [], []
+    for image, label in ds:
+        image = image.numpy()
+        label = label.numpy()
+        image = cv2.resize(image, (img_size, img_size))
+        X.append(image)
+        y.append(label)
+    X = np.array(X, dtype=np.float32) / 255.0  # Normalisation
+    y = np.array(y, dtype=np.float32)
+    return X, y
+X_train, y_train = dataset_to_numpy(ds_train, IMG_SIZE)
+X_demo, y_demo = dataset_to_numpy(ds_test, IMG_SIZE)
 
 def relu(x):
     return np.maximum(x,0)
@@ -20,17 +34,11 @@ def softmax(x):
     pass
 
 def cross_loss(resultatss, y_true):
-    #Calcul loss
-    #L = -1/N * somme log(p[classe_vraie])
+
     pass
 
 def train(model, X_train, y_train, X_test, y_test, epochs=5, batch_size=64):
-    #Boucle d'entraînement
-    #Pour chaque epoch :
-        #Shuffle
-        #Découpage en mini-batches de taille `batch_size`
-        #Pour chaque mini-batch :
-               #Forward, Softmax, Calcul loss, Backward, MAJ
+
     pass
 
 class Conv:
@@ -175,37 +183,21 @@ class CNN:
 
     def forward(self, X):
         #Convolution
-        out = self.conv.forward(X)           #(8, 26, 26)
+        out = self.conv.forward(X)
 
         #ReLU
-        out = np.maximum(0, out)             #(8, 26, 26)
+        out = np.maximum(0, out)
 
         #Max Pooling
-        out = self.pool.forward(out)         #(8, 13, 13)
+        out = self.pool.forward(out)
 
-        #Aplatissement (flatten)
-        out = out.reshape(-1)         #(8*13*13 = 1352)
 
-        #Couche Dense
-        out = self.dense1.forward(out)       #(1, 128)
-        
-        #ReLU
-        out = np.maximum(0, out)            
-
-        #Couche de sortie (logits)
-        out = self.dense2.forward(out)       #(1, 10)
-
-        return out  #scores bruts (avant softmax)
 
     def backward(self, gradientscore):
         pass
 
     def predict(self, X):
-        #Forward pour logits
-        scores = self.forward(X)
-
-        #Indice avec le score le plus élevé 
-        return np.argmax(scores, axis=1)
+        pass
 
 
 
