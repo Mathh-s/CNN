@@ -155,9 +155,16 @@ class Pooling:
         return sortie
         
     def backward(self, gradient):
-        #Transforme gradient de la forme (channels, H_out, W_out) en (channels, H, W)
-        pass
-
+        channels, H_out, W_out = grandient.shape
+        p = self.pool_size
+        d_entree = np.zeros(self.entree.shape)
+        for c in range(channels):
+            for i in range(H_out):
+                for j in range(W_out):
+                    region = self.entree[c, i*p:(i+1)*p, j*p:(j+1)*p]
+                    mask = (region == np.max(region))
+                    d_entree[c, i*p:(i+1)*p, j*p:(j+1)*p] = mask * gradient[c, i, j]
+        return d_entree
 
 class Dense:
     def __init__(self, nentree, nsortie, lr=0.01):
