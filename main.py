@@ -29,9 +29,9 @@ def relu_backward(gradient, x):
     pass
 
 def softmax(x):
-    #Convertit logits en proba
-    #softmax(x_i) = exp(x_i) / somme exp(x_j)
-    pass
+    shift_x = x - np.max(x)
+    exp_x = np.exp(shift_x)
+    return exp_x / np.sum(exp_x, axis=1, keepdims=True)
 
 def cross_loss(resultatss, y_true):
 
