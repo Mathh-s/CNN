@@ -24,10 +24,9 @@ def relu(x):
     return np.maximum(x,0)
 
 def relu_backward(gradient, x):
-    #Rétropropagation
-    #dL/dx = dL/dy * 1 si x > 0, sinon 0
-    pass
-
+    dX = np.array(gradient, copy=True)
+    dX[x <= 0] = 0
+    return dX
 def softmax(x):
     shift_x = x - np.max(x)
     exp_x = np.exp(shift_x)
