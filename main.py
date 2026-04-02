@@ -35,9 +35,11 @@ def softmax(x):
     
     return exp_x / somme
 
-def cross_loss(resultatss, y_true):
-
-    pass
+def cross_loss(probs, y_true):
+    probs = probs.flatten()
+    prob_classe_reelle = probs[int(y_true)]
+    loss = -np.log(prob_classe_reelle + 1e-8)
+    return loss  
 
 def train(model, X_train, y_train, X_test, y_test, epochs=5, batch_size=64):
 
