@@ -224,10 +224,41 @@ class CNN:
 
 
     def backward(self, gradientscore):
-        pass
+        # 1. Retour à travers la couche Dense 2
+        grad = self.dense2.backward(gradientscore)
+        
+        # 2. Retour à travers la ReLU de la couche Dense
+        grad = relu_backward(grad, self.out_dense1)
+        
+        # 3. Retour à travers la couche Dense 1
+        grad = self.dense1.backward(grad)
+        
+        # 4. "Unflatten" : On redonne au gradient la forme (8, 13, 13)
+        grad = grad.reshape(8, 13, 13)
+        
+        # 5. Retour à travers le Pooling
+        grad = self.pool.backward(grad)
+        
+        # 6. Retour à travers la ReLU de la Conv
+        grad = relu_backward(grad, self.out_conv)
+        
+        # 7. Retour à travers la Conv (Mise à jour des filtres)
+        grad = self.conv.backward(grad)
+        
+        return grad
 
     def predict(self, X):
-        pass
+        """
+        Prend une image X et retourne l'indice de la classe prédite
+        """
+        # On récupère les scores bruts (logits)
+        logits = self.forward(X)
+        
+        # On transforme en probabilités (en utilisant ta fonction softmax)
+        probas = softmax(logits)
+        
+        # On retourne l'indice du maximum (ex: 3 si c'est le chiffre 3)
+        return np.argmax(probas)
 
 
 
