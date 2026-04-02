@@ -31,7 +31,10 @@ def relu_backward(gradient, x):
 def softmax(x):
     shift_x = x - np.max(x)
     exp_x = np.exp(shift_x)
-    return exp_x / np.sum(exp_x, axis=1, keepdims=True)
+    somme = np.sum(exp_x, axis=1) # Résultat de forme (N,)
+    somme = somme.reshape(-1, 1)  # On force la forme (N, 1)
+    
+    return exp_x / somme
 
 def cross_loss(resultatss, y_true):
 
